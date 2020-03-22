@@ -5,11 +5,12 @@ import json
 import re
 from lxml import html
 
+import time
+import credentials as c
 
-username = 'countymccountface'
-password = 'illuminati'
 session_requests = requests.session()
 
+save_path = ''
 
 login_url = 'https://www.chess.com/login'
 result = session_requests.get(login_url)
@@ -17,8 +18,8 @@ tree = html.fromstring(result.text)
 
 token = list(set(tree.xpath("//input[@name='_token']/@value")))[0]
 
-payload={"_username": username, 
-         "_password": password, 
+payload={"_username": c.username, 
+         "_password": c.password, 
          "login": '',
          "_target_path": "https://www.chess.com/home",
          "_token": token
@@ -42,3 +43,8 @@ output = json.loads(result3.content)
 
 users = output[1]['data']['stats']['users']
 games = output[1]['data']['stats']['games']
+
+t = int(time.time())
+
+with open(save_path+'log', 'a') as f:
+    print(t, users, games, file=f)
